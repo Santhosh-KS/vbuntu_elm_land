@@ -1,16 +1,6 @@
 module Pages.Home_ exposing (Model, Msg, page)
 
-{- import Html
-   import View exposing (View)
-
-
-   page : View msg
-   page =
-       { title = "Homepage"
-       , body = [ Html.text "Hello, world!" ]
-       }
--}
-
+import Components.Button as CB
 import Effect exposing (Effect)
 import Html exposing (..)
 import Html.Attributes as Attr exposing (..)
@@ -45,14 +35,10 @@ init () =
 -- UPDATE
 
 
-type Msg
-    = NoOp
-
-
 update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
     case msg of
-        NoOp ->
+        SingupButtonClicked ->
             ( model
             , Effect.none
             )
@@ -67,8 +53,21 @@ subscriptions model =
     Sub.none
 
 
+type Msg
+    = SingupButtonClicked
+
+
 
 -- VIEW
+
+
+viewSignUpButton : Html Msg
+viewSignUpButton =
+    CB.new
+        { label = "Sign up"
+        , onClick = SingupButtonClicked
+        }
+        |> CB.view
 
 
 view : Model -> View Msg
@@ -77,6 +76,7 @@ view model =
     , body =
         [ -- Html.text "/about"
           hero model.heroModel
+        , viewSignUpButton
         ]
     }
 
@@ -113,7 +113,7 @@ heroHead model =
 
 hero : HeroModel -> Html Msg
 hero model =
-    Html.section [ Attr.class "hero is-warning is-fullheight " ]
+    Html.section [ Attr.class "hero is-success is-fullheight " ]
         [ heroHead model
         , heroBody model
         , heroFooter model
