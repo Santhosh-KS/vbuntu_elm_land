@@ -4,7 +4,6 @@ module Components.Icon exposing
     , view
     , withSizeLarge
     , withSizeMedium
-    , withSizeNormal
     , withSizeSmall
     , withStyleDanger
     , withStyleSuccess
@@ -19,7 +18,6 @@ import Html.Events
 type Icon msg
     = Settings
         { font : String
-        , text : String
         , onClick : msg
         , style : Style
         , size : Size
@@ -27,7 +25,7 @@ type Icon msg
 
 
 type Style
-    = Default
+    = Info
     | Success
     | Warning
     | Danger
@@ -40,13 +38,12 @@ type Size
     | Large
 
 
-new : { font : String, text : String, onClick : msg } -> Icon msg
+new : { font : String, onClick : msg } -> Icon msg
 new props =
     Settings
         { font = props.font
-        , text = props.text
         , onClick = props.onClick
-        , style = Default
+        , style = Info
         , size = Normal
         }
 
@@ -71,11 +68,6 @@ withSizeSmall (Settings settings) =
     Settings { settings | size = Small }
 
 
-withSizeNormal : Icon msg -> Icon msg
-withSizeNormal (Settings settings) =
-    Settings { settings | size = Normal }
-
-
 withSizeMedium : Icon msg -> Icon msg
 withSizeMedium (Settings settings) =
     Settings { settings | size = Medium }
@@ -89,8 +81,14 @@ withSizeLarge (Settings settings) =
 view : Icon msg -> Html msg
 view (Settings settings) =
     Html.span
-        [ Attr.class "icon"
-        , Html.Events.onClick settings.onClick
+        [ Html.Events.onClick settings.onClick
+        , Attr.class "icon"
+        , Attr.classList
+            [ ( "has-text-success", settings.style == Success )
+            , ( "has-text-warning", settings.style == Warning )
+            , ( "has-text-danger", settings.style == Danger )
+            , ( "has-text-small", settings.size == Small )
+            ]
         ]
         [ Html.i [ Attr.class settings.font ] []
         ]

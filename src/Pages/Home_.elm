@@ -1,6 +1,7 @@
 module Pages.Home_ exposing (Model, Msg, page)
 
 import Components.Button as CB
+import Components.Icon as CI
 import Effect exposing (Effect)
 import Html exposing (..)
 import Html.Attributes as Attr exposing (..)
@@ -43,6 +44,16 @@ update msg model =
             , Effect.none
             )
 
+        GitHubButtonClicked ->
+            ( model
+            , Effect.none
+            )
+
+        NoOp ->
+            ( model
+            , Effect.none
+            )
+
 
 
 -- SUBSCRIPTIONS
@@ -55,6 +66,8 @@ subscriptions model =
 
 type Msg
     = SingupButtonClicked
+    | GitHubButtonClicked
+    | NoOp
 
 
 
@@ -67,6 +80,7 @@ viewSignUpButton =
         { label = "Sign up"
         , onClick = SingupButtonClicked
         }
+        |> CB.withStyleWarning
         |> CB.view
 
 
@@ -220,18 +234,44 @@ stringToLitag className value =
         [ Html.text value ]
 
 
-gitHubButton : Html Msg
-gitHubButton =
+gitHubIcon : CI.Icon Msg
+gitHubIcon =
+    CI.new
+        { font = "fas fa-camera"
+        , onClick = NoOp
+        }
+        |> CI.withStyleWarning
+
+
+viewGitHubButton : Html Msg
+viewGitHubButton =
     Html.span [ Attr.class "navbar-item" ]
-        [ Html.a [ Attr.class "button is-success is-inverted" ]
-            [ Html.span [ Attr.class "icon" ]
-                [ Html.i [ Attr.class "fab fa-github" ] []
-                ]
-            , Html.span
-                []
-                [ Html.text "Download" ]
-            ]
+        [ CB.new
+            { label = "Download"
+            , onClick = GitHubButtonClicked
+            }
+            |> CB.withStyleDanger
+            |> CB.withIconLeft gitHubIcon
+            |> CB.view
         ]
+
+
+
+{- gitHubButton : Html Msg
+   gitHubButton =
+       Html.span [ Attr.class "navbar-item" ]
+           [ Html.a [ Attr.class "button is-danger is-inverted" ]
+               [ Html.span [ Attr.class "icon fas fa-book" ] []
+
+               {- [ Html.i [ Attr.class "fas fa-book" ] []
+                  ]
+               -}
+               , Html.span
+                   []
+                   [ Html.text "Download" ]
+               ]
+           ]
+-}
 
 
 navBarMenu : NavBarModel -> Html Msg
@@ -241,6 +281,8 @@ navBarMenu model =
             [ stringToAtag "navbar-item is-active" "Home"
             , stringToAtag "navbar-item " "Examples"
             , stringToAtag "navbar-item " "Documents"
-            , gitHubButton
+            , viewGitHubButton
+
+            -- , gitHubButton
             ]
         ]
