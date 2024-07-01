@@ -22,7 +22,7 @@ type Breadcrumb msg
 
 
 type Alignment
-    = Left
+    = Default
     | Center
     | Right
 
@@ -63,7 +63,7 @@ new : { items : List String } -> Breadcrumb msg
 new props =
     Settings
         { items = props.items
-        , alignment = Left
+        , alignment = Default
         , separator = Arrow
         }
 
@@ -75,16 +75,20 @@ stringToLiTag t =
 
 view : Breadcrumb mag -> Html msg
 view (Settings settings) =
-    Html.nav
-        [ Attr.class "breadcrumb"
-        , Attr.classList
-            [ ( "is-left", settings.alignment == Left )
-            , ( "is-centered", settings.alignment == Center )
-            , ( "is-right", settings.alignment == Right )
-            , ( "has-arrow-separator", settings.separator == Arrow )
-            , ( "has-bullet-separator", settings.separator == Bullet )
-            , ( "has-dot-separator", settings.separator == Dot )
-            , ( "has-succeeds-separator", settings.separator == Succeeds )
+    Html.section [ Attr.class "pt-6 pb-2" ]
+        [ Html.div [ Attr.class "container" ]
+            [ Html.nav
+                [ Attr.class "breadcrumb"
+                , Attr.classList
+                    [ ( "", settings.alignment == Default )
+                    , ( "is-centered", settings.alignment == Center )
+                    , ( "is-right", settings.alignment == Right )
+                    , ( "has-arrow-separator", settings.separator == Arrow )
+                    , ( "has-bullet-separator", settings.separator == Bullet )
+                    , ( "has-dot-separator", settings.separator == Dot )
+                    , ( "has-succeeds-separator", settings.separator == Succeeds )
+                    ]
+                ]
+                [ Html.ul [] (List.map stringToLiTag settings.items) ]
             ]
         ]
-        [ Html.ul [] (List.map stringToLiTag settings.items) ]

@@ -1,7 +1,9 @@
 module Pages.Home_ exposing (Model, Msg, page)
 
+import Animal exposing (Animal)
 import Components.Breadcrumb as BC exposing (..)
 import Components.Button as CB
+import Components.Dropdown exposing (Dropdown, Model)
 import Components.Icon as CI
 import Effect exposing (Effect)
 import Html exposing (..)
@@ -28,7 +30,9 @@ page shared route =
 
 init : () -> ( Model, Effect Msg )
 init () =
-    ( { heroModel = heroContent }
+    ( { heroModel = heroContent
+      , dropdown = Components.Dropdown.init { selected = Nothing }
+      }
     , Effect.none
     )
 
@@ -50,6 +54,17 @@ update msg model =
             , Effect.none
             )
 
+        DropdownSent innerMsg ->
+            Components.Dropdown.update
+                { msg = innerMsg
+                , model = model.dropdown
+                , toModel = \dropdown -> { model | dropdown = dropdown }
+                , toMsg = DropdownSent
+                }
+
+        ChangedSelection animal ->
+            ( model, Effect.none )
+
         NoOp ->
             ( model
             , Effect.none
@@ -68,11 +83,28 @@ subscriptions model =
 type Msg
     = SingupButtonClicked
     | GitHubButtonClicked
+    | DropdownSent (Components.Dropdown.Msg Animal Msg)
+    | ChangedSelection Animal
     | NoOp
 
 
 
 -- VIEW
+
+
+president : Model -> Html Msg
+president model =
+    Html.div []
+        [ h1 [] [ text "Select a president:" ]
+        , Components.Dropdown.new
+            { model = model.dropdown
+            , toMsg = DropdownSent
+            , choices = Animal.list
+            , toLabel = Animal.toName
+            }
+            |> Components.Dropdown.withOnChange ChangedSelection
+            |> Components.Dropdown.view
+        ]
 
 
 viewSignUpButton : Html Msg
@@ -89,7 +121,7 @@ bc : Html msg
 bc =
     BC.new
         { items = [ "Home", "Santhosh", "Shreshtu", "Swetu" ] }
-        |> BC.withAlignmentCentered
+        -- |> BC.withAlignmentCentered
         |> BC.withSeparatorBullet
         |> BC.view
 
@@ -100,14 +132,17 @@ view model =
     , body =
         [ -- Html.text "/about"
           hero model.heroModel
-        , viewSignUpButton
         , bc
+        , viewSignUpButton
+        , president model
         ]
     }
 
 
 type alias Model =
-    { heroModel : HeroModel }
+    { heroModel : HeroModel
+    , dropdown : Components.Dropdown.Model Animal
+    }
 
 
 
@@ -138,7 +173,7 @@ heroHead model =
 
 hero : HeroModel -> Html Msg
 hero model =
-    Html.section [ Attr.class "hero is-success is-fullheight " ]
+    Html.section [ Attr.class "hero is-primary is-fullheight " ]
         [ heroHead model
         , heroBody model
         , heroFooter model
