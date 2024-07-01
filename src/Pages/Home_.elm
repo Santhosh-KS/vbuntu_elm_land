@@ -1,5 +1,6 @@
 module Pages.Home_ exposing (Model, Msg, page)
 
+import Components.Breadcrumb as BC exposing (..)
 import Components.Button as CB
 import Components.Icon as CI
 import Effect exposing (Effect)
@@ -84,6 +85,15 @@ viewSignUpButton =
         |> CB.view
 
 
+bc : Html msg
+bc =
+    BC.new
+        { items = [ "Home", "Santhosh", "Shreshtu", "Swetu" ] }
+        |> BC.withAlignmentCentered
+        |> BC.withSeparatorBullet
+        |> BC.view
+
+
 view : Model -> View Msg
 view model =
     { title = "Home"
@@ -91,6 +101,7 @@ view model =
         [ -- Html.text "/about"
           hero model.heroModel
         , viewSignUpButton
+        , bc
         ]
     }
 
