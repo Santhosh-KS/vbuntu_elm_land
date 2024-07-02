@@ -1,4 +1,10 @@
-html {
+/* html {
   background: #333;
   color: white;
+} */
+
+:root {
+  --bulma-primary-h: 226deg;
+  --bulma-primary-l: 59%;
+  --bulma-link-h: 277deg;
 }

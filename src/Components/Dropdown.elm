@@ -24,7 +24,6 @@ type Dropdown item msg
         , size : Size
         , isDisabled : Bool
         , onChange : Maybe (item -> msg)
-        , buttonText : String
         }
 
 
@@ -44,7 +43,6 @@ new props =
         , size = Normal
         , isDisabled = False
         , onChange = Nothing
-        , buttonText = "Dropdown"
         }
 
 
@@ -77,12 +75,12 @@ withOnChange onChange (Settings settings) =
 
 type Model item
     = Model
-        { selected : Maybe item
+        { selected : item
         , isMenuOpen : Bool
         }
 
 
-init : { selected : Maybe item } -> Model item
+init : { selected : item } -> Model item
 init props =
     Model
         { selected = props.selected
@@ -95,7 +93,7 @@ init props =
 
 
 type Msg item msg
-    = OnDropdownClicked
+    = OnDropdownClicked item
     | SelectedItem
         { item : item
         , onChange : Maybe msg
@@ -129,7 +127,7 @@ update props =
             ( Model
                 { model
                     | isMenuOpen = False
-                    , selected = Just data.item
+                    , selected = data.item
                 }
             , case data.onChange of
                 Just onChange ->
@@ -140,8 +138,8 @@ update props =
             )
                 |> toParentModel
 
-        OnDropdownClicked ->
-            Model { model | isMenuOpen = not model.isMenuOpen, selected = Nothing } |> toParentModelWithNone
+        OnDropdownClicked item ->
+            Model { model | isMenuOpen = True, selected = item } |> toParentModelWithNone
 
 
 
@@ -177,9 +175,9 @@ view (Settings settings) =
         [ Html.div [ Attr.class "dropdown-trigger" ]
             [ Html.button
                 [ Attr.class "button"
-                , HEvents.onClick (OnDropdownClicked |> settings.toMsg)
+                , HEvents.onClick (model.selected |> OnDropdownClicked |> settings.toMsg)
                 ]
-                [ Html.span [] [ Html.text settings.buttonText ]
+                [ Html.span [] [ Html.text (model.selected |> settings.toLabel) ]
 
                 -- , Html.span [] [Html.text "Put some icon"]
                 ]
@@ -189,8 +187,7 @@ view (Settings settings) =
             ]
             [ Html.div
                 [ Attr.class "dropdown-content"
-
-                -- , HEvents.onClick (model.selected |> onMenuItemClick)
+                , HEvents.onClick (model.selected |> onMenuItemClick)
                 ]
                 (List.map
                     (settings.toLabel >> stringToAtag)
@@ -209,7 +206,7 @@ type DdModel item msg
 
 stringToAtag : String -> Html msg
 stringToAtag val =
-    Html.a [ Attr.class "dropdown-item", Attr.href "#" ] [ Html.text val ]
+    Html.a [ Attr.class "dropdown-item ", Attr.href "#" ] [ Html.text val ]
 
 
 dm : DdModel item msg -> Html msg

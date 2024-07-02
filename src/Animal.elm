@@ -1,4 +1,4 @@
-module Animal exposing (Animal, list, toName)
+module Animal exposing (Animal, defaultChoice, list, toName)
 
 
 type Animal
@@ -11,6 +11,11 @@ type Animal
 list : List Animal
 list =
     [ Dog, Cat, Dolphin, Pig ]
+
+
+defaultChoice : Animal
+defaultChoice =
+    Dog
 
 
 toName : Animal -> String
