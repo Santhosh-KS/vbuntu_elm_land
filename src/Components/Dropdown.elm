@@ -78,7 +78,6 @@ withOnChange onChange (Settings settings) =
 type Model item
     = Model
         { selected : Maybe item
-        , search : String
         , isMenuOpen : Bool
         }
 
@@ -87,7 +86,6 @@ init : { selected : Maybe item } -> Model item
 init props =
     Model
         { selected = props.selected
-        , search = ""
         , isMenuOpen = False
         }
 
@@ -97,9 +95,7 @@ init props =
 
 
 type Msg item msg
-    = FocusedDropdown
-    | BlurredDropdown
-    | UpdatedSearchInput String
+    = OnDropdownClicked
     | SelectedItem
         { item : item
         , onChange : Maybe msg
@@ -123,38 +119,29 @@ update props =
             ( props.toModel innerModel
             , effect
             )
+
+        toParentModelWithNone : Model item -> ( model, Effect msg )
+        toParentModelWithNone m =
+            ( props.toModel m, Effect.none )
     in
-    toParentModel <|
-        case props.msg of
-            FocusedDropdown ->
-                ( Model { model | isMenuOpen = True }
-                , Effect.none
-                )
+    case props.msg of
+        SelectedItem data ->
+            ( Model
+                { model
+                    | isMenuOpen = False
+                    , selected = Just data.item
+                }
+            , case data.onChange of
+                Just onChange ->
+                    Effect.sendMsg onChange
 
-            BlurredDropdown ->
-                ( Model { model | search = "", isMenuOpen = False }
-                , Effect.none
-                )
+                Nothing ->
+                    Effect.none
+            )
+                |> toParentModel
 
-            UpdatedSearchInput value ->
-                ( Model { model | search = value }
-                , Effect.none
-                )
-
-            SelectedItem data ->
-                ( Model
-                    { model
-                        | search = ""
-                        , isMenuOpen = False
-                        , selected = Just data.item
-                    }
-                , case data.onChange of
-                    Just onChange ->
-                        Effect.sendMsg onChange
-
-                    Nothing ->
-                        Effect.none
-                )
+        OnDropdownClicked ->
+            Model { model | isMenuOpen = not model.isMenuOpen, selected = Nothing } |> toParentModelWithNone
 
 
 
@@ -166,61 +153,6 @@ view (Settings settings) =
     let
         (Model model) =
             settings.model
-
-        onSearchInput : String -> msg
-        onSearchInput value =
-            settings.toMsg (UpdatedSearchInput value)
-
-        -- View the input of the dropdown, that opens the
-        -- menu when focused, and displays the search query
-        viewDropdownInput : Html msg
-        viewDropdownInput =
-            div [ class "dropdown__toggle" ]
-                [ input
-                    [ class "dropdown__input"
-                    , type_ "search"
-                    , disabled settings.isDisabled
-                    , HEvents.onInput onSearchInput
-                    , HEvents.onFocus (settings.toMsg FocusedDropdown)
-                    , HEvents.onBlur (settings.toMsg BlurredDropdown)
-                    ]
-                    []
-                , viewSelectedValueOverlay
-                ]
-
-        -- If a value is selected, this overlay should
-        -- appear over our input field when the menu is closed
-        viewSelectedValueOverlay : Html msg
-        viewSelectedValueOverlay =
-            case model.selected of
-                Nothing ->
-                    text ""
-
-                Just item ->
-                    if model.isMenuOpen then
-                        text ""
-
-                    else
-                        strong
-                            [ class "dropdown__selected" ]
-                            [ text (settings.toLabel item) ]
-
-        viewDropdownMenu : Html msg
-        viewDropdownMenu =
-            if model.isMenuOpen then
-                div [ class "dropdown__menu" ]
-                    (List.map viewDropdownMenuItem settings.choices)
-
-            else
-                text ""
-
-        viewDropdownMenuItem : item -> Html msg
-        viewDropdownMenuItem item =
-            Html.button
-                [ Attr.class "dropdown__menu-item"
-                , HEvents.onClick (onMenuItemClick item)
-                ]
-                [ Html.text (settings.toLabel item) ]
 
         onMenuItemClick : item -> msg
         onMenuItemClick item =
@@ -238,11 +170,14 @@ view (Settings settings) =
                             , onChange = Nothing
                             }
     in
-    Html.div [ Attr.class "dropdown is-active" ]
+    Html.div
+        [ Attr.class "dropdown "
+        , Attr.classList [ ( "is-active", model.isMenuOpen ) ]
+        ]
         [ Html.div [ Attr.class "dropdown-trigger" ]
             [ Html.button
                 [ Attr.class "button"
-                , HEvents.onClick onMenuItemClick
+                , HEvents.onClick (OnDropdownClicked |> settings.toMsg)
                 ]
                 [ Html.span [] [ Html.text settings.buttonText ]
 
@@ -252,26 +187,17 @@ view (Settings settings) =
         , Html.div
             [ Attr.class "dropdown-menu"
             ]
-            [ Html.div [ Attr.class "dropdown-content" ]
+            [ Html.div
+                [ Attr.class "dropdown-content"
+
+                -- , HEvents.onClick (model.selected |> onMenuItemClick)
+                ]
                 (List.map
                     (settings.toLabel >> stringToAtag)
                     settings.choices
                 )
             ]
         ]
-
-
-
-{- div
-   [ Attr.class "dropdown"
-   , Attr.classList
-       [ ( "dropdown--small", settings.size == Small )
-       ]
-   ]
-   [ viewDropdownInput
-   , viewDropdownMenu
-   ]
--}
 
 
 type DdModel item msg
