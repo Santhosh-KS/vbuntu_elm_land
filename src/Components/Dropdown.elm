@@ -9,6 +9,8 @@ module Components.Dropdown exposing
     , withOnChange
     )
 
+-- import Components.Icon as CI
+
 import Effect exposing (Effect)
 import Html exposing (..)
 import Html.Attributes as Attr exposing (..)

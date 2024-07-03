@@ -5,6 +5,7 @@ import Components.Breadcrumb as BC exposing (..)
 import Components.Button as CB
 import Components.Dropdown exposing (Dropdown, Model)
 import Components.Icon as CI
+import Components.Image as CImg
 import Components.Message as CM exposing (..)
 import Effect exposing (Effect)
 import Html exposing (..)
@@ -140,16 +141,30 @@ dummyMessageWindow =
         ]
 
 
+placeHolderImage : Html msg
+placeHolderImage =
+    Html.div [ Attr.class "box" ]
+        [ CImg.new
+            { src = "https://bulma.io/assets/images/placeholders/1280x960.png"
+            , altText = "Placeholder Image"
+            }
+            |> CImg.with64x64
+            |> CImg.view
+        ]
+
+
 view : Model -> View Msg
 view model =
     { title = "Home"
     , body =
-        [ -- Html.text "/about"
-          hero model.heroModel
-        , bc
-        , viewSignUpButton
-        , president model
-        , dummyMessageWindow
+        [ hero model.heroModel
+        , Html.div [ Attr.class "container" ]
+            [ bc
+            , viewSignUpButton
+            , president model
+            , dummyMessageWindow
+            , placeHolderImage
+            ]
         ]
     }
 
@@ -188,18 +203,31 @@ heroHead model =
 
 hero : HeroModel -> Html Msg
 hero model =
-    Html.section [ Attr.class "hero is-primary is-fullheight " ]
+    Html.section [ Attr.class "hero is-primary " ]
+        -- Html.section [ Attr.class "hero is-primary is-fullheight " ]
         [ heroHead model
         , heroBody model
         , heroFooter model
         ]
 
 
+testingHeroImg : String -> Html msg
+testingHeroImg src =
+    CImg.new
+        { src = src
+        , altText = "Hero image"
+        }
+        -- |> CImg.with3by4
+        |> CImg.view
+
+
 heroBody : HeroModel -> Html Msg
 heroBody model =
     Html.div [ Attr.class "hero-body" ]
         [ Html.div [ Attr.class "container has-text-centered" ]
-            [ Html.img [ Attr.src model.image ] []
+            [ testingHeroImg model.image
+
+            -- Html.img [ Attr.src model.image ] []
             , stringToPtag "title" model.title
             , stringToPtag "subtitle" model.subTitle
             ]
@@ -298,7 +326,7 @@ stringToLitag className value =
 gitHubIcon : CI.Icon Msg
 gitHubIcon =
     CI.new
-        { font = "fas fa-camera"
+        { font = "fas fa-angle-down"
         , onClick = NoOp
         }
         |> CI.withStyleWarning
