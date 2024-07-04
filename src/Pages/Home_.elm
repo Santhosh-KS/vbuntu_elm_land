@@ -1,15 +1,17 @@
 module Pages.Home_ exposing (Model, Msg, page)
 
 import Animal exposing (Animal)
-import Components.Breadcrumb as BC exposing (..)
+import Components.Breadcrumb as BC
 import Components.Button as CB
-import Components.Dropdown exposing (Dropdown, Model)
+import Components.Card as Card
+import Components.Content as Content
+import Components.Dropdown
 import Components.Icon as CI
 import Components.Image as CImg
-import Components.Message as CM exposing (..)
-import Effect exposing (Effect)
-import Html exposing (..)
-import Html.Attributes as Attr exposing (..)
+import Components.Message as CM
+import Effect as E
+import Html
+import Html.Attributes as Attr
 import Page exposing (Page)
 import Route exposing (Route)
 import Shared
@@ -30,12 +32,12 @@ page shared route =
 -- INIT
 
 
-init : () -> ( Model, Effect Msg )
+init : () -> ( Model, E.Effect Msg )
 init () =
     ( { heroModel = heroContent
       , dropdown = Components.Dropdown.init { selected = Animal.defaultChoice }
       }
-    , Effect.none
+    , E.none
     )
 
 
@@ -43,17 +45,17 @@ init () =
 -- UPDATE
 
 
-update : Msg -> Model -> ( Model, Effect Msg )
+update : Msg -> Model -> ( Model, E.Effect Msg )
 update msg model =
     case msg of
         SingupButtonClicked ->
             ( model
-            , Effect.none
+            , E.none
             )
 
         GitHubButtonClicked ->
             ( model
-            , Effect.none
+            , E.none
             )
 
         DropdownSent innerMsg ->
@@ -65,11 +67,11 @@ update msg model =
                 }
 
         ChangedSelection animal ->
-            ( model, Effect.none )
+            ( model, E.none )
 
         NoOp ->
             ( model
-            , Effect.none
+            , E.none
             )
 
 
@@ -94,10 +96,10 @@ type Msg
 -- VIEW
 
 
-president : Model -> Html Msg
+president : Model -> Html.Html Msg
 president model =
     Html.div []
-        [ h1 [] [ text "Select a president:" ]
+        [ Html.h1 [] [ Html.text "Select a president:" ]
         , Components.Dropdown.new
             { model = model.dropdown
             , toMsg = DropdownSent
@@ -109,7 +111,7 @@ president model =
         ]
 
 
-viewSignUpButton : Html Msg
+viewSignUpButton : Html.Html Msg
 viewSignUpButton =
     CB.new
         { label = "Sign up"
@@ -119,7 +121,7 @@ viewSignUpButton =
         |> CB.view
 
 
-bc : Html msg
+bc : Html.Html msg
 bc =
     BC.new
         { items = [ "Home", "Santhosh", "Shreshtu", "Swetu" ] }
@@ -128,7 +130,7 @@ bc =
         |> BC.view
 
 
-dummyMessageWindow : Html msg
+dummyMessageWindow : Html.Html msg
 dummyMessageWindow =
     Html.div [ Attr.class "container" ]
         [ CM.new
@@ -141,15 +143,42 @@ dummyMessageWindow =
         ]
 
 
-placeHolderImage : Html msg
-placeHolderImage =
+displayImage : Html.Html msg
+displayImage =
     Html.div [ Attr.class "box" ]
-        [ CImg.new
-            { src = "https://bulma.io/assets/images/placeholders/1280x960.png"
-            , altText = "Placeholder Image"
-            }
-            |> CImg.with64x64
+        [ placeHolderImg
+            |> CImg.with128x128
             |> CImg.view
+        ]
+
+
+placeHolderImg : CImg.Image msg
+placeHolderImg =
+    CImg.new
+        { src = "https://bulma.io/assets/images/placeholders/1280x960.png"
+        , altText = "Placeholder Image"
+        }
+        |> CImg.with64x64
+
+
+placeHolderContent : Content.Content msg
+placeHolderContent =
+    Content.new
+        { content = "Lorem ipsum dolor sit amet, officia excepteur ex fugiat reprehenderit enim labore culpa sint ad nisi Lorem pariatur mollit ex esse exercitation amet. Nisi anim cupidatat excepteur officia. Reprehenderit nostrud nostrud ipsum Lorem est aliquip amet voluptate voluptate dolor minim nulla est proident. Nostrud officia pariatur ut officia. Sit irure elit esse ea nulla sunt ex occaecat reprehenderit commodo officia dolor Lorem duis laboris cupidatat officia voluptate. Culpa proident adipisicing id nulla nisi laboris ex in Lorem sunt duis officia eiusmod. Aliqua reprehenderit commodo ex non excepteur duis sunt velit enim. Voluptate laboris sint cupidatat ullamco ut ea consectetur et est culpa et culpa duis."
+        }
+
+
+placeHolderCard : Html.Html msg
+placeHolderCard =
+    Html.div []
+        [ -- Card.new
+          Card.new
+            { title = "My Card"
+            }
+            |> Card.withContent placeHolderContent
+            |> Card.withImage placeHolderImg
+            |> Card.withFooter [ "Save", "Edit", "Delete" ]
+            |> Card.view
         ]
 
 
@@ -160,10 +189,11 @@ view model =
         [ hero model.heroModel
         , Html.div [ Attr.class "container" ]
             [ bc
+            , placeHolderCard
             , viewSignUpButton
             , president model
             , dummyMessageWindow
-            , placeHolderImage
+            , displayImage
             ]
         ]
     }
@@ -196,12 +226,12 @@ heroContent =
     }
 
 
-heroHead : HeroModel -> Html Msg
+heroHead : HeroModel -> Html.Html Msg
 heroHead model =
     Html.div [ Attr.class "hero-head" ] [ navBar model.navBarModel ]
 
 
-hero : HeroModel -> Html Msg
+hero : HeroModel -> Html.Html Msg
 hero model =
     Html.section [ Attr.class "hero is-primary " ]
         -- Html.section [ Attr.class "hero is-primary is-fullheight " ]
@@ -211,7 +241,7 @@ hero model =
         ]
 
 
-testingHeroImg : String -> Html msg
+testingHeroImg : String -> Html.Html msg
 testingHeroImg src =
     CImg.new
         { src = src
@@ -221,7 +251,7 @@ testingHeroImg src =
         |> CImg.view
 
 
-heroBody : HeroModel -> Html Msg
+heroBody : HeroModel -> Html.Html Msg
 heroBody model =
     Html.div [ Attr.class "hero-body" ]
         [ Html.div [ Attr.class "container has-text-centered" ]
@@ -234,7 +264,7 @@ heroBody model =
         ]
 
 
-heroFooter : HeroModel -> Html Msg
+heroFooter : HeroModel -> Html.Html Msg
 heroFooter model =
     Html.div [ Attr.class "hero-footer" ]
         [ Html.nav [ Attr.class "tabs is-boxed is-fullwidth" ]
@@ -262,12 +292,12 @@ type alias NavBarModel =
     }
 
 
-spanGen : Int -> Html Msg
+spanGen : Int -> Html.Html Msg
 spanGen _ =
     Html.span [] []
 
 
-navBarBurger : Html Msg
+navBarBurger : Html.Html Msg
 navBarBurger =
     let
         s =
@@ -276,7 +306,7 @@ navBarBurger =
     Html.span [ Attr.class "navbar-burger" ] s
 
 
-navBarLogo : NavBarModel -> Html Msg
+navBarLogo : NavBarModel -> Html.Html Msg
 navBarLogo model =
     Html.a [ Attr.class "navbar-item" ]
         [ Html.img
@@ -287,7 +317,7 @@ navBarLogo model =
         ]
 
 
-navBarBrand : NavBarModel -> Html Msg
+navBarBrand : NavBarModel -> Html.Html Msg
 navBarBrand model =
     Html.div [ Attr.class "navbar-brand" ]
         [ navBarLogo model
@@ -295,7 +325,7 @@ navBarBrand model =
         ]
 
 
-navBar : NavBarModel -> Html Msg
+navBar : NavBarModel -> Html.Html Msg
 navBar model =
     Html.header [ Attr.class "navbar" ]
         [ Html.div [ Attr.class "container" ]
@@ -305,19 +335,19 @@ navBar model =
         ]
 
 
-stringToAtag : String -> String -> Html Msg
+stringToAtag : String -> String -> Html.Html Msg
 stringToAtag className value =
     Html.a [ Attr.class className ]
         [ Html.text value ]
 
 
-stringToPtag : String -> String -> Html Msg
+stringToPtag : String -> String -> Html.Html Msg
 stringToPtag className value =
     Html.p [ Attr.class className ]
         [ Html.text value ]
 
 
-stringToLitag : String -> String -> Html Msg
+stringToLitag : String -> String -> Html.Html Msg
 stringToLitag className value =
     Html.li [ Attr.class className ]
         [ Html.text value ]
@@ -332,7 +362,7 @@ gitHubIcon =
         |> CI.withStyleWarning
 
 
-viewGitHubButton : Html Msg
+viewGitHubButton : Html.Html Msg
 viewGitHubButton =
     Html.span [ Attr.class "navbar-item" ]
         [ CB.new
@@ -363,7 +393,7 @@ viewGitHubButton =
 -}
 
 
-navBarMenu : NavBarModel -> Html Msg
+navBarMenu : NavBarModel -> Html.Html Msg
 navBarMenu model =
     Html.div [ Attr.class "navbar-menu" ]
         [ Html.div [ Attr.class "navbar-end" ]
