@@ -9,6 +9,8 @@ import Components.Dropdown
 import Components.Icon as CI
 import Components.Image as CImg
 import Components.Message as CM
+import Components.Navbar.Brand as CNB
+import Components.Navbar.NavMain as CNav exposing (Navbar)
 import Effect as E
 import Html
 import Html.Attributes as Attr
@@ -177,9 +179,31 @@ placeHolderCard =
             }
             |> Card.withContent placeHolderContent
             |> Card.withImage placeHolderImg
-            |> Card.withFooter [ "Save", "Edit", "Delete" ]
+            |> Card.withFooter [ "Save", "Edit", "Shreshtu" ]
             |> Card.view
         ]
+
+
+testImg : CImg.Image msg
+testImg =
+    CImg.new
+        { src = "./assets/vbuntuText1080X260.png"
+        , altText = "Brand Image"
+        }
+
+
+brandImg : CNB.Brand msg
+brandImg =
+    CNB.new
+        { image = testImg }
+        |> CNB.withImageLink "https://vbuntu.org"
+
+
+testNav : CNav.Navbar msg
+testNav =
+    CNav.new
+        { brand = Just brandImg
+        }
 
 
 view : Model -> View Msg
@@ -189,11 +213,14 @@ view model =
         [ hero model.heroModel
         , Html.div [ Attr.class "container" ]
             [ bc
-            , placeHolderCard
-            , viewSignUpButton
-            , president model
-            , dummyMessageWindow
-            , displayImage
+            , testNav |> CNav.view
+
+            {- , placeHolderCard
+               , viewSignUpButton
+               , president model
+               , dummyMessageWindow
+               , displayImage
+            -}
             ]
         ]
     }
