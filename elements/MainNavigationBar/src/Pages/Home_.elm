@@ -1,11 +1,14 @@
 module Pages.Home_ exposing (page)
 
+{- import Components.Navbar.Item as CNI
+   import Components.Navbar.Link as CNL
+-}
+
 import Components.Image as CImg
 import Components.Navbar.Brand as CNB
-import Components.Navbar.Item as CNI
-import Components.Navbar.Link as CNL
-import Components.Navbar.Menu as CNM
+import Components.Navbar.Menu as CNM exposing (Menu)
 import Components.Navbar.NavMain as CNN
+import Effect exposing (Effect)
 import Html
 import Html.Attributes as Attr
 import NavItems exposing (..)
@@ -22,9 +25,20 @@ brand =
     CNB.new { image = bImg }
 
 
+menuModel : CNM.Model NavItems.MenuItems
+menuModel =
+    CNM.init
+        { currentItem = NavItems.Dog
+        }
+
+
 navMenu : CNM.Menu NavItems.MenuItems msg
 navMenu =
-    CNM.new { items = NavItems.list, active = NavItems.toBool, toString = NavItems.toString }
+    CNM.new
+        { items = NavItems.list
+        , model = menuModel
+        , toString = NavItems.toString
+        }
 
 
 navMain : CNN.Navbar NavItems.MenuItems msg
@@ -35,6 +49,8 @@ navMain =
 page : View msg
 page =
     { title = "Homepage"
+
+    -- , init = init
     , body =
         [ Html.div [ Attr.class "container" ]
             [ Html.div [ Attr.class "navbar" ]

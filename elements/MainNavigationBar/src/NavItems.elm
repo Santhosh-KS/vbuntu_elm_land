@@ -1,7 +1,7 @@
 module NavItems exposing
-    ( MenuItems
+    ( MenuItems(..)
     , list
-    , toBool
+      -- , toBool
     , toString
     )
 
@@ -34,17 +34,12 @@ toString items =
             "Piggins"
 
 
-toBool : MenuItems -> Bool
-toBool items =
-    case items of
-        Dog ->
-            True
 
-        Cat ->
-            True
-
-        Dolphin ->
-            True
-
-        Pig ->
-            True
+{- currentItem : MenuItems
+   currentItem =
+       Pig
+-}
+{- toBool : MenuItems -> Bool
+   toBool items =
+       items == currentItem
+-}
