@@ -1,71 +1,33 @@
 module NavItems exposing
-    ( MenuEvents(..)
-    , MenuItems(..)
-    , itemToItemEventPair
+    ( MenuItems(..)
     , list
     , toString
     )
 
-import Components.Navbar.Menu exposing (Menu)
-
 
 type MenuItems
-    = Dog
-    | Cat
-    | Dolphin
-    | Pig
-
-
-type MenuEvents
-    = DogMenuSelected
-    | PigMenuSelected
-    | CatMenuSelected
-    | DolphinMenuSelected
-
-
-itemToItemEventPair : MenuItems -> ( MenuItems, MenuEvents )
-itemToItemEventPair mi =
-    case mi of
-        Dog ->
-            ( Dog, DogMenuSelected )
-
-        Cat ->
-            ( Cat, CatMenuSelected )
-
-        Dolphin ->
-            ( Dolphin, DolphinMenuSelected )
-
-        Pig ->
-            ( Pig, PigMenuSelected )
+    = Home
+    | Documents
+    | Github
+    | SignUp
 
 
 list : List MenuItems
 list =
-    [ Dog, Cat, Dolphin, Pig ]
+    [ Home, Documents, Github, SignUp ]
 
 
 toString : MenuItems -> String
 toString items =
     case items of
-        Dog ->
-            "Doge"
+        Home ->
+            "Home"
 
-        Cat ->
-            "Kitten"
+        Documents ->
+            "Documents"
 
-        Dolphin ->
-            "Dolphin"
+        Github ->
+            "Github"
 
-        Pig ->
-            "Piggins"
-
-
-
-{- currentItem : MenuItems
-   currentItem =
-       Pig
--}
-{- toBool : MenuItems -> Bool
-   toBool items =
-       items == currentItem
--}
+        SignUp ->
+            "SignUp"

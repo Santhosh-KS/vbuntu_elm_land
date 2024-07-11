@@ -58,12 +58,16 @@ type alias Model =
     }
 
 
+defalutNavItem : CNM.Model MenuItems
+defalutNavItem =
+    CNM.init
+        { currentItem = NavItems.Home
+        }
+
+
 init : () -> ( Model, Effect Msg )
 init () =
-    ( { menuModel =
-            CNM.init
-                { currentItem = NavItems.Dog
-                }
+    ( { menuModel = defalutNavItem
       }
     , Effect.none
     )
@@ -83,10 +87,7 @@ update msg model =
         MenuItemSelected innerMsg ->
             CNM.update
                 { msgMIM = innerMsg
-                , model =
-                    CNM.init
-                        { currentItem = NavItems.Pig
-                        }
+                , model = defalutNavItem
                 , toModel = \m -> { model | menuModel = m }
                 , toMsg = MenuItemSelected
                 }
@@ -114,6 +115,7 @@ view model =
                 [ navMain model |> CNN.view
                 ]
             ]
-        , model |> Debug.toString |> Html.text
+
+        -- , model |> Debug.toString |> Html.text
         ]
     }

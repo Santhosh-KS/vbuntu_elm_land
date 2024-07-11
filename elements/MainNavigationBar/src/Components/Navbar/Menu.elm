@@ -111,6 +111,8 @@ view (Menu s) =
                     [ ( "is-active", flag )
                     ]
                 , Html.Events.onClick (s.toMsg (OnClicked selection))
+
+                -- , Html.Events.onClick (selection |> OnClicked |> s.toMsg)
                 ]
                 [ Html.text str ]
     in
