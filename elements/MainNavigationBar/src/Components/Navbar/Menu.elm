@@ -11,6 +11,7 @@ module Components.Navbar.Menu exposing
 import Effect exposing (Effect)
 import Html exposing (Html)
 import Html.Attributes as Attr
+import Html.Events
 
 
 type Menu item msg
@@ -19,6 +20,7 @@ type Menu item msg
         , items : List item
         , toString : item -> String
         , onChange : Maybe (item -> msg)
+        , toMsg : Msg item msg -> msg
         }
 
 
@@ -34,11 +36,12 @@ init props =
 
 
 type Msg item msg
-    = Selected { item : item, onChange : Maybe msg }
+    = OnClicked item
+    | Selected { item : item, onChange : Maybe msg }
 
 
 update :
-    { msg : Msg item msg
+    { msgMIM : Msg item msg
     , model : Model item
     , toModel : Model item -> model
     , toMsg : Msg item msg -> msg
@@ -54,7 +57,7 @@ update props =
             ( props.toModel innermodel, effect )
     in
     toParentModel <|
-        case props.msg of
+        case props.msgMIM of
             Selected data ->
                 ( Model { model | currentItem = data.item }
                 , case data.onChange of
@@ -65,11 +68,15 @@ update props =
                         Effect.none
                 )
 
+            OnClicked i ->
+                ( Model { model | currentItem = i }, Effect.none )
+
 
 new :
     { items : List item
     , model : Model item
     , toString : item -> String
+    , toMsg : Msg item msg -> msg
     }
     -> Menu item msg
 new props =
@@ -78,6 +85,7 @@ new props =
         , model = props.model
         , onChange = Nothing
         , toString = props.toString
+        , toMsg = props.toMsg
         }
 
 
@@ -88,22 +96,29 @@ view (Menu s) =
         miToi (Model m) =
             m.currentItem
 
-        isSelectedItem : item -> item -> ( String, Bool )
+        isSelectedItem : item -> item -> ( String, Bool, item )
         isSelectedItem i1 i2 =
-            ( s.toString i2, i1 == i2 )
+            ( s.toString i2, i1 == i2, i2 )
 
         lss =
             List.map (s.model |> miToi |> isSelectedItem) s.items
 
-        toHtmlMsg : ( String, Bool ) -> Html msg
-        toHtmlMsg ( str, flag ) =
+        toHtmlMsg : ( String, Bool, item ) -> Html msg
+        toHtmlMsg ( str, flag, selection ) =
             Html.a
                 [ Attr.class "navbar-item "
-                , Attr.classList [ ( "is-active", flag ) ]
+                , Attr.classList
+                    [ ( "is-active", flag )
+                    ]
+                , Html.Events.onClick (s.toMsg (OnClicked selection))
                 ]
                 [ Html.text str ]
     in
     Html.div
         [ Attr.class "navbar-menu"
         ]
-        [ Html.div [ Attr.class "navbar-end " ] (List.map toHtmlMsg lss) ]
+        [ Html.div
+            [ Attr.class "navbar-end "
+            ]
+            (List.map toHtmlMsg lss)
+        ]

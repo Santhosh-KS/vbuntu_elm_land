@@ -24,7 +24,7 @@ brand =
     CNB.new { image = bImg } |> CNB.withImageLink "https://vbuntu.org"
 
 
-navMenu : Model -> CNM.Menu NavItems.MenuItems Msg
+navMenu : Model -> CNM.Menu NavItems.MenuItems msg
 navMenu model =
     CNM.new
         { items = NavItems.list
@@ -34,7 +34,7 @@ navMenu model =
         }
 
 
-navMain : Model -> CNN.Navbar NavItems.MenuItems Msg
+navMain : Model -> CNN.Navbar NavItems.MenuItems msg
 navMain model =
     CNN.new { brand = Just brand } |> CNN.withMenu (navMenu model)
 
