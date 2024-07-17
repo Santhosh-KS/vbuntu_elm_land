@@ -1,9 +1,10 @@
 module Components.Image exposing
-    ( Image
+    ( Image(..)
     , Model
     , Msg(..)
     , Position(..)
     , init
+    , new
     , update
     , view
     , withOnClick
@@ -18,8 +19,12 @@ import Html.Attributes as Attr exposing (..)
 type Image item msg
     = Image
         { model : Model item msg
-        , onClick : msg
         }
+
+
+new : Model item msg -> Image item msg
+new model =
+    Image { model = model }
 
 
 type Model item msg
@@ -28,12 +33,17 @@ type Model item msg
         , altText : String
         , size : Size
         , position : Position
+        , onClick : msg
         }
 
 
 withOnClick : msg -> Image item msg -> Image item msg
 withOnClick ms (Image img) =
-    Image { img | onClick = ms }
+    let
+        (ImageModel m) =
+            img.model
+    in
+    Image { img | model = ImageModel { m | onClick = ms } }
 
 
 type Msg item msg
@@ -74,16 +84,13 @@ type Position
     | Centered
 
 
-init : { src : String, altText : String, onClick : msg } -> Image item msg
+init : { src : String, altText : String, onClick : msg } -> Model item msg
 init props =
-    Image
-        { model =
-            ImageModel
-                { src = props.src
-                , altText = props.altText
-                , size = Default
-                , position = Left
-                }
+    ImageModel
+        { src = props.src
+        , altText = props.altText
+        , size = Default
+        , position = Left
         , onClick = props.onClick
         }
 

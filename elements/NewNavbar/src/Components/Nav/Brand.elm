@@ -22,14 +22,14 @@ type Brand item msg
         }
 
 
-new : { model : Model item msg } -> Brand item msg
-new props =
-    Brand { model = props.model }
+new : Model item msg -> Brand item msg
+new model =
+    Brand { model = model }
 
 
 type Model item msg
     = BrandModel
-        { image : CI.Image item msg
+        { imageModel : CI.Model item msg
         , onClick : msg
         }
 
@@ -42,18 +42,18 @@ type Msg item msg
 -- INIT
 
 
-init : { image : CI.Image item msg, onClick : msg } -> Model item msg
+init : { imageModel : CI.Model item msg, onClick : msg } -> Model item msg
 init props =
-    BrandModel { image = props.image, onClick = props.onClick }
+    BrandModel { imageModel = props.imageModel, onClick = props.onClick }
 
 
 withImage : CI.Image item msg -> Brand item msg -> Brand item msg
-withImage img (Brand brand) =
+withImage (CI.Image img) (Brand brand) =
     let
         (BrandModel m) =
             brand.model
     in
-    Brand { brand | model = BrandModel { m | image = img } }
+    Brand { brand | model = BrandModel { m | imageModel = img.model } }
 
 
 
@@ -71,7 +71,7 @@ view (Brand brand) =
             [ Attr.class "navbar-item"
             , Html.Events.onClick bm.onClick
             ]
-            [ bm.image |> CI.view ]
+            [ { model = bm.imageModel } |> CI.new >> CI.view ]
         ]
 
 

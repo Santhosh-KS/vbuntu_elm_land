@@ -29,9 +29,9 @@ type Msg item msg
 -- NEW
 
 
-new : { model : Model item msg, onClick : msg } -> Navbar item msg
-new props =
-    Navbar { model = props.model }
+new : Model item msg -> Navbar item msg
+new model =
+    Navbar { model = model }
 
 
 type Model item msg
@@ -83,7 +83,7 @@ view (Navbar nav) =
             nav.model
 
         brand =
-            { model = m.brandModel } |> CNB.new >> CNB.view
+            m.brandModel |> CNB.new >> CNB.view
     in
     Html.nav
         [ Attr.class "navbar navigation"

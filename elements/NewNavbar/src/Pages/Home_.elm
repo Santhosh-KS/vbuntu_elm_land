@@ -42,7 +42,7 @@ init () =
         bm : CNB.Model item Msg
         bm =
             CNB.init
-                { image = brandImage
+                { imageModel = brandImage
                 , onClick = NoOp
                 }
 
@@ -124,7 +124,7 @@ viewContainer model =
         ]
 
 
-brandImage : CI.Image item Msg
+brandImage : CI.Model item Msg
 brandImage =
     CI.init
         { src = "./assets/vbuntuText1080X260.png"
@@ -133,11 +133,13 @@ brandImage =
         }
 
 
-brand : Model -> CNB.Brand EmptyItem Msg
-brand m =
-    CNB.new { model = m.brandModel }
+
+{- brand : Model -> CNB.Brand EmptyItem Msg
+   brand m =
+       CNB.new { model = m.brandModel }
+-}
 
 
 navMain : Model -> CNN.Navbar EmptyItem Msg
 navMain m =
-    CNN.new { model = m.navModel, onClick = NoOp }
+    CNN.new { model = m.navModel }
